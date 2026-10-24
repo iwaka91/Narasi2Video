@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Narasi2Video - contoh jalur render yang sudah teruji (PIL + ffmpeg, tanpa internet).
 
-Memperagakan: latar, judul masuk, benda bergerak, Tingang pemandu, watermark
-menyatu pada objek, footer tipis, subtitle, dan penutup 2 detik.
+Memperagakan: latar, judul masuk, benda bergerak, footer tipis (15%), subtitle,
+dan penutup 2 detik. Tanpa watermark pada objek dan tanpa Tingang pemandu
+(Tingang hanya kameo satu kali, lihat SKILL.md bagian 5).
 Pakai:  python3 render_demo.py keluaran.mp4 [audio.wav]
 Ubah SCENES dan CLOSING untuk video sungguhan; logika gerak dipakai ulang.
 """
@@ -25,7 +26,8 @@ SCENES = [
     dict(dur=4.0, judul="Apa itu\nProklamasi?", sub="Pernyataan kemerdekaan bangsa Indonesia",
          bg=("#1f8a48", "#0b3f24"), gaya="infografis"),
 ]
-CLOSING = dict(dur=2.0, akun=["Instagram  @toto_gutomo", "TikTok  @toto.gutomo", "YouTube  TotoGutomo"])
+CLOSING = dict(dur=2.0, akun=["Instagram  @toto_gutomo", "TikTok  @toto.gutomo", "YouTube  TotoGutomo"],
+               nama="Toto Gutomo, S.Pd, Gr, M.Pd")
 WATERMARK = "totogutomo.com"
 
 def tingang_png(path="/tmp/n2v_tingang.png", w=460):
@@ -47,7 +49,7 @@ def center_text(d, text, y, sz, fill, alpha=255, anchor_x=W // 2):
     for i, line in enumerate(text.split("\n")):
         d.text((anchor_x, y + i * int(sz * 1.2)), line, font=f, fill=fill[:3] + (alpha,), anchor="mm")
 
-def scene_frame(sc, t, bg, tg):
+def scene_frame(sc, t, bg):
     img = bg.copy().convert("RGBA")
     d = ImageDraw.Draw(img, "RGBA")
     dur = sc["dur"]
@@ -67,23 +69,15 @@ def scene_frame(sc, t, bg, tg):
                         fill=(255, 241, 200, int(255 * pop * fade_out)))
     d.polygon([(cx - bw // 2 - 30, cy - bh // 2), (cx, cy - bh // 2 - int(170 * s)), (cx + bw // 2 + 30, cy - bh // 2)],
               fill=(214, 58, 30, int(255 * pop * fade_out)))
-    # Watermark menyatu: putih tipis di dinding objek (satu scene satu watermark)
-    d.text((cx, cy + bh // 2 - 50), WATERMARK, font=font(34), fill=(255, 255, 255, int(110 * pop * fade_out)), anchor="mm")
     # Benda bergerak: bola menelusuri garis waktu (kiri ke kanan = waktu maju)
     mt = ease_io((t - 1.2) / 2.0)
     bx = 160 + mt * (W - 320); by = 1400
     d.line((160, by, W - 160, by), fill=(255, 255, 255, 120), width=8)
     d.ellipse((bx - 34, by - 34, bx + 34, by + 34), fill=(242, 183, 5, int(255 * fade_out)))
-    # Tingang pemandu: melayang halus + bayangan alas (efek pseudo-3D)
-    bob = math.sin(t * 3.2) * 14
-    tx, ty = 150, 1470 - int(tg.size[1] * 0.45)
-    sh = 1 - 0.08 * math.sin(t * 3.2)
-    d.ellipse((tx + 30, 1532, tx + 30 + int(230 * sh), 1572), fill=(0, 0, 0, 80))
-    img.alpha_composite(tg.resize((int(tg.size[0] * 0.62), int(tg.size[1] * 0.62))), (tx, int(ty + bob + 40)))
     # Subtitle: kata kunci aman layar, kontras jelas
-    d.rounded_rectangle((90, 1660, W - 90, 1780), 28, fill=(0, 0, 0, int(140 * fade_out)))
-    d.text((W // 2, 1720), sc["sub"], font=font(40), fill=(255, 255, 255, int(255 * fade_out)), anchor="mm")
-    d.text((W // 2, 1870), WATERMARK, font=font(28), fill=(255, 255, 255, 120), anchor="mm")  # footer tipis
+    d.rounded_rectangle((90, 1500, W - 90, 1620), 28, fill=(0, 0, 0, int(140 * fade_out)))
+    d.text((W // 2, 1560), sc["sub"], font=font(40), fill=(255, 255, 255, int(255 * fade_out)), anchor="mm")
+    d.text((W // 2, 1862), WATERMARK, font=font(22), fill=(255, 255, 255, 38), anchor="mm")  # footer 15%
     return img.convert("RGB")
 
 def closing_frame(c, t):
@@ -91,12 +85,12 @@ def closing_frame(c, t):
     k = ease_out(t / 0.4)
     for i, a in enumerate(c["akun"]):
         d.text((W // 2, 800 + i * 150 + int((1 - k) * 60)), a, font=font(58), fill=(255, 255, 255, int(255 * k)), anchor="mm")
-    d.text((W // 2, 1300), "Guru SMA Negeri 3 Maliku", font=font(40), fill=(242, 183, 5, int(255 * k)), anchor="mm")
-    d.text((W // 2, 1870), WATERMARK, font=font(28), fill=(255, 255, 255, 120), anchor="mm")
+    d.text((W // 2, 1250), c["nama"], font=font(50), fill=(255, 255, 255, int(255 * k)), anchor="mm")
+    d.text((W // 2, 1345), WATERMARK, font=font(60), fill=(242, 183, 5, int(255 * k)), anchor="mm")
+    d.text((W // 2, 1862), WATERMARK, font=font(22), fill=(255, 255, 255, 38), anchor="mm")
     return img.convert("RGB")
 
 def main(out, audio=None):
-    tg = tingang_png()
     cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
            "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-"]
     if audio: cmd += ["-i", audio, "-c:a", "aac", "-b:a", "128k", "-shortest"]
@@ -105,7 +99,7 @@ def main(out, audio=None):
     for sc in SCENES:
         bg = gradient(*sc["bg"])
         for f in range(int(sc["dur"] * FPS)):
-            p.stdin.write(scene_frame(sc, f / FPS, bg, tg).tobytes())
+            p.stdin.write(scene_frame(sc, f / FPS, bg).tobytes())
     for f in range(int(CLOSING["dur"] * FPS)):
         p.stdin.write(closing_frame(CLOSING, f / FPS).tobytes())
     p.stdin.close(); p.wait()

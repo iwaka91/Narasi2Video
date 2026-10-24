@@ -17,7 +17,7 @@ Sapaan ke pengguna: "Pak Guru" atau "Bapak". Jawaban ringkas, hindari istilah te
 3. **Bagi menjadi scene** 9-10 detik (bagian 3).
 4. **Tentukan gaya tiap scene** (bagian 4). Bila ragu, tanya Bapak sambil menyarankan satu pilihan yang lebih kuat.
 5. **Tampilkan storyboard singkat** (daftar scene: durasi, gaya, isi visual, gerak, kata sorotan) dan **tunggu persetujuan** sebelum render.
-6. **Render** (bagian 11) lalu periksa beberapa frame.
+6. **Render** (bagian 11): render dulu 6-8 bingkai contoh dan periksa, baru render penuh, lalu periksa lagi.
 7. **Serahkan** MP4, SRT, dan daftar aset. Tawarkan output ganda (16:9 untuk IFP) hanya sebagai tawaran, jangan dibuat tanpa izin.
 
 Jangan menambah pekerjaan yang tidak diminta. Tawarkan dulu bila ada tambahan.
@@ -40,8 +40,10 @@ Aturan tambahan:
 
 ## 3. Pembagian scene
 
-- Durasi tiap scene **9-10 detik** (toleransi 8-11).
+- Durasi tiap scene **9-10 detik** (toleransi 8-11). Bila tidak ada jeda yang pas, lebih baik lewat sedikit dari toleransi (dan beri tahu Bapak) daripada memotong di tengah kalimat.
 - Potong di **akhir kalimat atau jeda diam**, jangan di tengah kalimat. Gabungkan kalimat pendek, pecah kalimat panjang di jeda napas.
+- **Judul sub-topik** ("Pertama, teori X") selalu ikut scene yang membahasnya, jangan tertinggal di scene sebelumnya. Titik potong diambil di tengah jeda diam sebelum judul.
+- Jeda pendek (koma, napas) dapat dicari dengan `silencedetect=noise=-27dB:d=0.08`; jeda antar-kalimat dengan `-35dB:d=0.4`. Teks tiap bagian ucapan dicocokkan dengan urutan bagian ucapan di antara jeda, lalu diperiksa kewajarannya dari jumlah huruf per detik (sekitar 14-19).
 - Satu scene = satu gagasan. Tiap scene punya judul pendek dan teks pendukung.
 - Pola waktu dalam scene:
   - 0-2 detik: benda dan teks **masuk**.
@@ -61,10 +63,10 @@ Aturan tambahan:
 ## 5. Tingang (maskot)
 
 - Burung enggang **2D dengan efek pseudo-3D** (gradasi, bayangan alas, kilau). Berkas siap pakai: `assets/tingang.svg` (versi berkacamata dari HaHe, `iwaka91/HaHe`).
-- **Scene kartun**: **kameo** singkat (muncul sebentar, bereaksi, lalu pergi). Bukan tokoh utama.
-- **Scene infografis**: **pemandu**. Menunjuk, mengarahkan perhatian ke bagian penting, dan menggerakkan alur penjelasan.
+- **Kameo satu kali per video**, kecil dan tidak menonjol, menyatu dengan adegan (contoh teruji: melompat naik ke kapal yang sedang berlayar di scene 1 dan ikut berlayar). Ukuran sekitar 25% dari ukuran penuh.
+- **Tidak ada pemandu.** Tingang tidak menjelaskan di scene infografis, tidak muncul di scene teori, dan tidak ada di penutup.
 - Tingang menyesuaikan tema (aturan HaHe): boleh diberi atribut tema (topi, syal, dan lainnya) dengan menggambar ulang, tanpa lambang dada.
-- Pakai Tingang seperlunya, jangan di setiap scene bila mengganggu isi.
+- Pilih adegan kameo yang wajar (ada kapal, ada perjalanan, dan lainnya). Bila tidak ada, tawarkan Bapak atau lewati.
 
 ## 6. Gerak benda dan transisi
 
@@ -84,14 +86,17 @@ match cut (benda terakhir scene A berubah jadi benda pertama scene B, misalnya j
 ## 7. Hook, pemantik, bahasa
 
 - **Hook selalu ada** di 3 detik pertama scene 1: pertanyaan, fakta mengejutkan, atau pernyataan kuat yang tampil sebagai teks besar.
+- **Hook = sampul otomatis**: teks hook tampil **penuh sejak bingkai pertama (detik 0), tanpa animasi masuk**, karena bingkai pertama dipakai sebagai sampul. Utamakan pertanyaan pembuka dari naskah.
 - Bahasa **teoritis tapi ringan**: tepat dan tidak bertele-tele, mudah dipahami siswa dan umum.
-- **Pemantik** untuk siswa: satu pertanyaan renungan di akhir scene terakhir.
+- **Pemantik** hanya bila ada di naskah Bapak. Jangan menambah pemantik sendiri; bila naskah tidak memuatnya, tidak perlu.
+- **Peta di awal**: untuk materi yang berkaitan dengan wilayah Indonesia/Nusantara, scene 1 memakai peta (daratan Indonesia hijau, wilayah asal pengaruh berwarna lain, nama wilayah, jalur putus-putus, dan kapal berlayar). Tepi peta dipudarkan. Data peta: `git clone --depth 1 --filter=blob:none --sparse https://github.com/nvkelso/natural-earth-vector.git`, lalu `git sparse-checkout set geojson` dan pakai `geojson/ne_50m_admin_0_countries.geojson` (pip dan npm tidak bisa dipakai, GitHub bisa). Proyeksi sederhana (lintang-bujur ke piksel) cukup.
 - Satu pesan inti per video.
 
 ## 8. Subtitle
 
 - Sinkron dengan narasi, maksimal 2 baris, kata kunci ditebalkan atau diberi warna.
-- Kontras jelas (latar gelap tipis di belakang teks), di area aman layar (hindari 150 piksel paling atas dan 250 piksel paling bawah bila platform menimpa tombol).
+- Kontras jelas (latar gelap tipis di belakang teks), di area aman layar (hindari 150 piksel paling atas dan 250 piksel paling bawah bila platform menimpa tombol). Teruji: bilah subtitle berpusat di y=1560 (dari 1920).
+- Tanpa transkrip bertanda waktu: bagi teks jadi potongan (maks sekitar 50 huruf) dan sebar waktunya sebanding jumlah huruf di dalam rentang ucapan antar-jeda. Beri tahu Bapak bahwa sinkronnya perkiraan.
 - Keluarkan juga berkas **SRT**.
 
 ## 9. Suara
@@ -101,14 +106,17 @@ match cut (benda terakhir scene A berubah jadi benda pertama scene B, misalnya j
 
 ## 10. Watermark, footer, penutup
 
-- **Footer**: tulisan putih tipis `totogutomo.com` di bawah, ada terus.
-- **Watermark menyatu**: `totogutomo.com` putih tipis pada objek di scene (dinding rumah, papan, dan lainnya). **Satu scene, satu watermark.**
-- **Penutup 2 detik**: akun sosmed Bapak, dan "Guru SMA Negeri 3 Maliku". Akun saat ini (dari totogutomo.com): Instagram `@toto_gutomo`, TikTok `@toto.gutomo`, YouTube `TotoGutomo`. Bila Bapak menambah akun, ikuti data terbaru di `iwaka91/totogutomo.com` (berkas `data.js`) atau tanyakan.
+- **Footer**: tulisan `totogutomo.com` di bawah (y=1862), putih dengan **opasitas 15%**, ukuran huruf 22 piksel, ada terus (termasuk di penutup).
+- **Tidak ada watermark pada objek.** Jangan menaruh `totogutomo.com` pada benda, papan, atau dinding di dalam scene. Footer sudah cukup.
+- **Penutup 2 detik**: logo dan akun Instagram `@toto_gutomo`, TikTok `@toto.gutomo`, YouTube `TotoGutomo` (logo digambar sederhana), lalu nama **"Toto Gutomo, S.Pd, Gr, M.Pd"** dan `totogutomo.com`. **Tanpa tulisan "Guru SMA Negeri 3 Maliku"** di penutup. Bila Bapak menambah akun, ikuti data terbaru di `iwaka91/totogutomo.com` (berkas `data.js`) atau tanyakan.
 
 ## 11. Format dan render
 
 - Ukuran **9:16, 1080x1920**, 24 fps, H.264 (`yuv420p`), AAC, `+faststart`.
-- Jalur render yang **sudah teruji** (tanpa internet): gambar bingkai dengan Python PIL, kirim ke ffmpeg lewat pipa. Contoh lengkap: `scripts/render_demo.py` (latar, judul masuk, benda bergerak, Tingang pemandu, watermark pada objek, subtitle, penutup, dan audio). Pakai ulang logika geraknya; ganti `SCENES` dan `CLOSING`.
+- Jalur render yang **sudah teruji** (tanpa internet): gambar bingkai dengan Python PIL, kirim ke ffmpeg lewat pipa. Contoh: `scripts/render_demo.py` (latar, judul masuk, benda bergerak, subtitle, footer, penutup, dan audio). Pakai ulang logika geraknya; ganti `SCENES` dan `CLOSING`.
+- Video penuh teruji: 61 detik (1459 bingkai) dengan 2 proses paralel (`multiprocessing.Pool(2)`, `imap` berurutan) selesai sekitar 1 menit. Audio ditempel dengan `-af apad=pad_dur=3` dan `-t` sebesar total video agar penutup 2 detik tetap utuh.
+- **Transisi geser terarah** (scene baru masuk dari kanan, 0,4 detik, percepatan halus, sapuan cahaya tipis) teruji di video sungguhan. Subtitle dan footer digambar di atas hasil transisi.
+- Tata letak teruji (1080x1920): judul y 190-440, kartu ilustrasi y 535-985, tiga kotak kata kunci y 1050-1420 (lebar 900), subtitle y 1560, footer y 1862. Kotak kata kunci muncul tepat saat kata terkait diucapkan.
 - Tingang diubah dari SVG ke gambar dengan ffmpeg (librsvg): `ffmpeg -i assets/tingang.svg -vf scale=460:-1 -pix_fmt rgba -frames:v 1 tingang.png`. (ImageMagick `convert` gagal di lingkungan uji.)
 - Setelah render, **periksa** beberapa bingkai (awal, tengah, penutup) dan durasi dengan `ffprobe` sebelum menyerahkan.
 - Bila render tidak bisa dilakukan, serahkan **paket cadangan**: rencana scene, SRT, dan daftar aset, lalu jelaskan singkat apa yang kurang.
@@ -122,8 +130,9 @@ match cut (benda terakhir scene A berubah jadi benda pertama scene B, misalnya j
 
 ## 13. Status uji (24 Oktober 2026)
 
-- Teruji: pembuatan MP4 9:16 (h264 + aac) dari bingkai PIL dan audio, 6 detik dalam sekitar 4 detik; pembacaan jeda diam dengan `silencedetect`; Tingang dari SVG tampil benar.
+- Teruji: pembuatan MP4 9:16 (h264 + aac) dari bingkai PIL dan audio; pembacaan jeda diam dengan `silencedetect`; Tingang dari SVG tampil benar.
+- Teruji (video nyata "Hindu-Buddha masuk ke Nusantara", 61 detik, 6 scene): jalur naskah + audio, pemotongan scene dari jeda, gaya campur kartun-infografis, transisi geser, peta Indonesia dari Natural Earth, kameo Tingang di kapal, penutup dengan logo, dan revisi sesuai bagian 5, 7, 10.
 - Teruji oleh Bapak di Claude Pro: berhasil. Skill ini dirancang untuk dipakai di Claude Pro.
-- Belum teruji: alat suara-ke-teks otomatis (tidak dapat dipasang di lingkungan uji awal) dan transisi kompleks (match cut, parallax) pada video sungguhan.
+- Belum teruji: alat suara-ke-teks otomatis (tidak dapat dipasang di lingkungan uji awal) dan transisi kompleks (match cut, parallax) pada video sungguhan. Sinkron subtitle masih perkiraan, belum dari transkrip bertanda waktu.
 
 Narasi2Video ©2026 | totogutomo.com
